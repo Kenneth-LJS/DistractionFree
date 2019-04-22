@@ -1,3 +1,13 @@
+// ==UserScript==
+// @name         Docs Darkmode
+// @namespace    *://docs.google.com/document/*
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        *://docs.google.com/document/*
+// @grant        none
+// ==/UserScript==
+
 (function() {
 
   const _css = `
@@ -119,6 +129,10 @@
     .df-enabled .docs-ui-unprintable:not(.kix-findandreplaceoverlayprovider-match),
     .df-enabled .kix-page-content-wrapper {
      background: transparent!important;
+    }
+
+    .df-enabled .kix-findandreplaceoverlayprovider-match {
+      background-color:#C0C0C0;
     }
 
     .df-enabled .kix-commentoverlayrenderer-highlighted {
@@ -307,7 +321,7 @@
   var _menuButtonElement = document.createElement("button");
   _menuButtonElement.id = "df-menu-button"
   _menuButtonElement.innerText = "▣";
-  _menuButtonElement.addEventListener("click", toggleMenu);
+  _menuButtonElement.addEventListener("click", exitMode);
 
   var _menu = document.createElement("div");
   _menu.id = "df-menu";
@@ -402,13 +416,7 @@
   }
 
   function forceRelayout() {
-    if (typeof browser != "undefined") {
-      browser.runtime.sendMessage({ msg: "forceRelayout" });
-    } else if (typeof chrome != "undefined") {
-      chrome.extension.sendMessage({ msg: "forceRelayout" });
-    } else if (typeof safari != "undefined") {
-      safari.self.tab.dispatchMessage("forceRelayout");
-    } 
+    window.dispatchEvent(new Event('resize'));
   }
 
   function enterMode() {
@@ -486,10 +494,7 @@
       }, 500)
     }
 
-    setTheme(localStorage.getItem("df-theme"));
-    if (localStorage.getItem(extractURL())) {
-      enterMode();
-    }
+    setTheme('dark');
   }
 
   function extractURL() {
